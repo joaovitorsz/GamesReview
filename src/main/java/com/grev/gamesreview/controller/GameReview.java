@@ -6,6 +6,7 @@ import com.grev.gamesreview.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/game")
@@ -50,23 +51,30 @@ public class GameReview {
     // Posts
 
     @PostMapping("/review/gravar-jogo")
-    public ResponseEntity<GameResponseDTO> gravarJogo(
+    public ResponseEntity<?> gravarJogo(
             @RequestBody GameRequestDTO dados) {
 
-        if (dados == null){
-            return ResponseEntity.badRequest().build();
+        try {
+            return ResponseEntity.ok(gameService.gravarJogo(dados));
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok(gameService.gravarJogo(dados));
     }
 
     @PostMapping("/review/gravar-avaliacao/{gameId}")
-    public ResponseEntity<AvaliacaoResponseDTO> gravarAvaliacao(
+    public ResponseEntity<?> gravarAvaliacao(
             @PathVariable Long gameId,
             @RequestBody AvaliacaoRequestDTO dados) {
 
-            return avaliacaoService.gravarAvaliacao(gameId, dados)
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
+            try {
+                Optional<AvaliacaoResponseDTO> salva = avaliacaoService.gravarAvaliacao(gameId, dados);
+                if (salva.isEmpty()){
+                    return ResponseEntity.notFound().build();
+                }
+                return ResponseEntity.ok(salva.get());
+            } catch (IllegalArgumentException e){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
 
     // Puts
@@ -86,17 +94,19 @@ public class GameReview {
     }
 
     @PutMapping("/review/editar-avaliacao/{idAvaliacao}")
-    public ResponseEntity<AvaliacaoResponseDTO> editarAvaliacao(
+    public ResponseEntity<?> editarAvaliacao(
             @PathVariable Long idAvaliacao,
             @RequestBody AvaliacaoUpdateDTO dados) {
 
-        if (dados == null) {
-            return ResponseEntity.badRequest().build();
+        try {
+            Optional<AvaliacaoResponseDTO> atualizada = avaliacaoService.editarAvaliacao(idAvaliacao, dados);
+            if (atualizada.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(atualizada.get());
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return  avaliacaoService.editarAvaliacao(idAvaliacao, dados)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Deletes

@@ -12,13 +12,13 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "games")
-@JsonPropertyOrder({"id", "nome", "metacritic", "genero", "sinopse"})
+@JsonPropertyOrder({"id", "titulo", "metacritic", "genero", "sinopse"})
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
-    private String nome;
+    private String titulo;
     private Integer metacritic;
     private String genero;
     @Column(columnDefinition = "text")

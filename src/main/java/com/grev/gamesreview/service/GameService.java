@@ -4,6 +4,7 @@ import com.grev.gamesreview.DTO.GameRequestDTO;
 import com.grev.gamesreview.model.Game;
 import com.grev.gamesreview.repository.GameRepository;
 import com.grev.gamesreview.DTO.GameResponseDTO;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class GameService {
 
         List<Game> jogos;
         if(tituloRegex == null && generoRegex == null && metacritic == null) {
-            jogos = gameRepository.findAll();
+            jogos = gameRepository.findAll(Sort.by("id"));
         } else{
             jogos = gameRepository.filtrar(tituloRegex, generoRegex, metacritic);
         }
@@ -47,11 +48,28 @@ public class GameService {
     }
 
     public GameResponseDTO gravarJogo(GameRequestDTO dados){
+
+        if (dados == null){
+            throw new IllegalArgumentException("As informações do jogo são obrigatórias. Preencha corretamente.");
+        }
+        if (dados.titulo() == null || dados.titulo().isBlank()) {
+            throw new IllegalArgumentException("O título do jogo é obrigatório. Preencha corretamente.");
+        }
+        if (dados.genero() == null || dados.genero().isBlank()){
+            throw new IllegalArgumentException("O gênero do jogo é obrigatório. Preencha corretamente");
+        }
+        if (dados.metacritic() == null || dados.metacritic() < 0 || dados.metacritic() > 100){
+            throw new IllegalArgumentException("A nota do Metacritic é obrigatória e deve estar entre 0 e 100.");
+        }
+        if (dados.sinopse() == null || dados.sinopse().isBlank()){
+            throw new IllegalArgumentException("A sinopse do jogo é obrigatória. Preencha corretamente.");
+        }
+
         Game novoJogo = new Game();
-        novoJogo.setNome(dados.titulo());
-        novoJogo.setGenero(dados.genero());
+        novoJogo.setNome(dados.titulo().trim());
+        novoJogo.setGenero(dados.genero().trim());
         novoJogo.setMetacritic(dados.metacritic());
-        novoJogo.setSinopse(dados.sinopse());
+        novoJogo.setSinopse(dados.sinopse().trim());
 
         Game jogoSalvo = gameRepository.save(novoJogo);
 

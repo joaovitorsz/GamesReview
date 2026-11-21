@@ -35,12 +35,26 @@ public class AvaliacaoService {
     }
 
     public Optional<AvaliacaoResponseDTO> gravarAvaliacao(Long gameId, AvaliacaoRequestDTO dados){
+
+        if (dados == null){
+            throw new IllegalArgumentException("As informações da avaliação são obrigatórias. Preencha corretamente.");
+        }
+        if (dados.avaliador() == null || dados.avaliador().isBlank()){
+            throw new IllegalArgumentException("O nome do avaliador é obrigatório. Preencha corretamente.");
+        }
+        if (dados.nota() == null || dados.nota() < 0 || dados.nota() > 10){
+            throw new IllegalArgumentException("A nota é obrigatória e deve estar entre 0 e 10.");
+        }
+        if (dados.comentario() == null || dados.comentario().isBlank()){
+            throw new IllegalArgumentException("O comentário é obrigatório. Preencha corretamente.");
+        }
+
         return gameRepository.findById(gameId).map(game -> {
 
             Avaliacao novaAvaliacao = new Avaliacao();
-            novaAvaliacao.setAvaliador(dados.avaliador());
+            novaAvaliacao.setAvaliador(dados.avaliador().trim());
             novaAvaliacao.setNota(dados.nota());
-            novaAvaliacao.setComentario(dados.comentario());
+            novaAvaliacao.setComentario(dados.comentario().trim());
             novaAvaliacao.setGame(game);
 
             Avaliacao avaliacaoSalva = avaliacoesRepository.save(novaAvaliacao);
@@ -49,6 +63,17 @@ public class AvaliacaoService {
     }
 
     public Optional<AvaliacaoResponseDTO> editarAvaliacao(Long idAvaliacao, AvaliacaoUpdateDTO dados){
+
+        if (dados == null){
+            throw new IllegalArgumentException("Informe os dados para atualização");
+        }
+        if (dados.nota() != null && (dados.nota() < 0 || dados.nota() > 10)){
+            throw new IllegalArgumentException("A nota deve estar entre 0 e 10.");
+        }
+        if (dados.comentario() != null && dados.comentario().isBlank()){
+            throw new IllegalArgumentException("Insira um comentário para sua avaliação.");
+        }
+
         return avaliacoesRepository.findById(idAvaliacao).map(avaliacao -> {
             if (dados.nota() != null) avaliacao.setNota(dados.nota());
             if (dados.comentario() != null) avaliacao.setComentario(dados.comentario());
