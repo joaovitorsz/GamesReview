@@ -85,7 +85,7 @@ public class AvaliacaoService {
 
     public Optional<String> deletarAvaliacao(Long idAvaliacao) {
         return avaliacoesRepository.findById(idAvaliacao).map(avaliacao -> {
-            String nomeJogo = avaliacao.getGame().getNome();
+            String nomeJogo = avaliacao.getGame().getTitulo();
             String avaliador = avaliacao.getAvaliador();
 
             avaliacoesRepository.delete(avaliacao);

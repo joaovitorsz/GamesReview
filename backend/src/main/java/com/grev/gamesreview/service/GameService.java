@@ -66,7 +66,7 @@ public class GameService {
         }
 
         Game novoJogo = new Game();
-        novoJogo.setNome(dados.titulo().trim());
+        novoJogo.setTitulo(dados.titulo().trim());
         novoJogo.setGenero(dados.genero().trim());
         novoJogo.setMetacritic(dados.metacritic());
         novoJogo.setSinopse(dados.sinopse().trim());
@@ -78,7 +78,7 @@ public class GameService {
 
     public Optional<GameResponseDTO> editarJogo(Long gameId, GameRequestDTO dados){
         return gameRepository.findById(gameId).map(game -> {
-            if (dados.titulo() != null) game.setNome(dados.titulo());
+            if (dados.titulo() != null) game.setTitulo(dados.titulo());
             if (dados.genero() != null) game.setGenero(dados.genero());
             if (dados.metacritic() != null) game.setMetacritic(dados.metacritic());
             if (dados.sinopse() != null) game.setSinopse(dados.sinopse());
@@ -90,7 +90,7 @@ public class GameService {
 
     public Optional<String> deletarJogo(Long gameId){
         return gameRepository.findById(gameId).map(game -> {
-            String nomeJogo = game.getNome();
+            String nomeJogo = game.getTitulo();
             gameRepository.delete(game);
 
             return "O jogo " + nomeJogo + " foi deletado!";
