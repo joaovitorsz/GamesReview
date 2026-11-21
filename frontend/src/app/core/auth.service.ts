@@ -3,15 +3,16 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthResponse, LoginRequest, RegistroRequest } from "./models/auth.model";
 import { tap } from "rxjs";
-import { setActiveConsumer } from "@angular/core/primitives/signals";
+import { environment } from "../../environments/environment.development";
 
+const STORAGE_KEY = 'gamesreview_auth';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
     
     private http = inject(HttpClient);
     private router = inject(Router);
-    private authUrl = '${environment.apiRul}/auth';
+    private authUrl = `${environment.apiUrl}/auth`;
 
     private sessaoSignal = signal<AuthResponse | null>(this.lerSessaoInicial());
 
@@ -21,13 +22,13 @@ export class AuthService {
     isAdmin = computed(() => this.sessaoSignal()?.role === 'ADMIN');
 
     login(dados: LoginRequest){
-        return this.http.post<AuthResponse>('${this.authUrl}/login', dados).pipe(
+        return this.http.post<AuthResponse>(`${this.authUrl}/login`, dados).pipe(
             tap((resposta) => this.salvarSessao(resposta))
         );
     }
 
     registrar(dados: RegistroRequest){
-        return this.http.post<AuthResponse>('${authUrl}/register', dados).pipe(
+        return this.http.post<AuthResponse>(`${this.authUrl}/register`, dados).pipe(
             tap((resposta) => this.salvarSessao(resposta))
         )
     }
@@ -43,13 +44,13 @@ export class AuthService {
 
     private salvarSessao(resposta: AuthResponse){
         const sessaoAtual = this.sessaoSignal();
-        const sessaoFInal: AuthResponse = {
+        const sessaoFinal: AuthResponse = {
             ...resposta,
             token: resposta.token ?? sessaoAtual?.token ?? null
         };
         
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessaoFInal));
-        this.sessaoSignal.set(sessaoFInal);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessaoFinal));
+        this.sessaoSignal.set(sessaoFinal);
     }
 
     private lerSessaoInicial(): AuthResponse | null{
