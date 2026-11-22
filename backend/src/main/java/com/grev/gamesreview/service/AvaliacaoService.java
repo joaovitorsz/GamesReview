@@ -5,10 +5,16 @@ import com.grev.gamesreview.DTO.AvaliacaoRequestDTO;
 import com.grev.gamesreview.DTO.AvaliacaoResponseDTO;
 import com.grev.gamesreview.DTO.AvaliacaoUpdateDTO;
 import com.grev.gamesreview.model.Avaliacao;
+import com.grev.gamesreview.model.Role;
+import com.grev.gamesreview.model.Usuario;
 import com.grev.gamesreview.repository.AvaliacoesRepository;
 import com.grev.gamesreview.repository.GameRepository;
+import com.grev.gamesreview.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +25,21 @@ public class AvaliacaoService {
 
     private final GameRepository gameRepository;
     private final AvaliacoesRepository avaliacoesRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public AvaliacaoService(GameRepository gameRepository, AvaliacoesRepository avaliacoesRepository){
+    public AvaliacaoService(GameRepository gameRepository, AvaliacoesRepository avaliacoesRepository, UsuarioRepository usuarioRepository){
         this.gameRepository = gameRepository;
         this.avaliacoesRepository = avaliacoesRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private Usuario obterUsuarioLogado(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()){
+            throw new AccessDeniedException("Usuário não autenticado.");
+        }
+        return usuarioRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new AccessDeniedException("Usuário autenticado não encontrado."));
     }
 
     @Transactional(readOnly = true)
@@ -32,6 +49,12 @@ public class AvaliacaoService {
                         .map(AvaliacaoResponseDTO::new)
                         .toList()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AvaliacaoResponseDTO> buscarPorId(Long idAvaliacao){
+        return avaliacoesRepository.findById(idAvaliacao)
+                .map(AvaliacaoResponseDTO::new);
     }
 
     public Optional<AvaliacaoResponseDTO> gravarAvaliacao(Long gameId, AvaliacaoRequestDTO dados){
@@ -49,6 +72,8 @@ public class AvaliacaoService {
             throw new IllegalArgumentException("O comentário é obrigatório. Preencha corretamente.");
         }
 
+        Usuario usuarioLogado = obterUsuarioLogado();
+
         return gameRepository.findById(gameId).map(game -> {
 
             Avaliacao novaAvaliacao = new Avaliacao();
@@ -56,6 +81,7 @@ public class AvaliacaoService {
             novaAvaliacao.setNota(dados.nota());
             novaAvaliacao.setComentario(dados.comentario().trim());
             novaAvaliacao.setGame(game);
+            novaAvaliacao.setUsuario(usuarioLogado);
 
             Avaliacao avaliacaoSalva = avaliacoesRepository.save(novaAvaliacao);
             return new AvaliacaoResponseDTO(avaliacaoSalva);
@@ -74,9 +100,18 @@ public class AvaliacaoService {
             throw new IllegalArgumentException("Insira um comentário para sua avaliação.");
         }
 
+        Usuario usuarioLogado = obterUsuarioLogado();
+
         return avaliacoesRepository.findById(idAvaliacao).map(avaliacao -> {
+            boolean uDono = avaliacao.getUsuario() != null
+                    && avaliacao.getUsuario().getEmail().equals(usuarioLogado.getEmail());
+
+            if(!uDono){
+                throw new AccessDeniedException("Você só pode editar suas próprias avaliações.");
+            }
+
             if (dados.nota() != null) avaliacao.setNota(dados.nota());
-            if (dados.comentario() != null) avaliacao.setComentario(dados.comentario());
+            if (dados.comentario() != null) avaliacao.setComentario(dados.comentario().trim());
 
             Avaliacao avaliacaoAtualizada = avaliacoesRepository.save(avaliacao);
             return new AvaliacaoResponseDTO(avaliacaoAtualizada);
@@ -84,7 +119,18 @@ public class AvaliacaoService {
     }
 
     public Optional<String> deletarAvaliacao(Long idAvaliacao) {
+
+        Usuario usuarioLogado = obterUsuarioLogado();
+
         return avaliacoesRepository.findById(idAvaliacao).map(avaliacao -> {
+            boolean uDono = avaliacao.getUsuario() != null
+                    && avaliacao.getUsuario().getEmail().equals(usuarioLogado.getEmail());
+            boolean uAdmin = usuarioLogado.getRole() == Role.ADMIN;
+
+            if(!uDono && !uAdmin){
+                throw new AccessDeniedException("Você não tem permissão para remover esta avaliação.");
+            }
+
             String nomeJogo = avaliacao.getGame().getTitulo();
             String avaliador = avaliacao.getAvaliador();
 

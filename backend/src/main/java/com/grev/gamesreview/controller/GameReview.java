@@ -3,7 +3,9 @@ package com.grev.gamesreview.controller;
 import com.grev.gamesreview.DTO.*;
 import com.grev.gamesreview.service.AvaliacaoService;
 import com.grev.gamesreview.service.GameService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +32,8 @@ public class GameReview {
         return ResponseEntity.ok(gameService.listarJogos(titulo, genero, metacritic));
     }
 
-    @GetMapping("/review/id/{id}")
-    public ResponseEntity<GameResponseDTO> buscarPorId(
+    @GetMapping("/review/jogo/{id}")
+    public ResponseEntity<GameResponseDTO> buscarJogoPorId(
             @PathVariable Long id) {
 
         return gameService.buscarPorId(id)
@@ -44,6 +46,15 @@ public class GameReview {
             @PathVariable Long gameId) {
 
         return avaliacaoService.listarPorJogo(gameId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/review/avaliacao/{idAvaliacao}")
+    public ResponseEntity<AvaliacaoResponseDTO> buscarAvaliacaoPorId(
+            @PathVariable Long idAvaliacao){
+
+        return avaliacaoService.buscarPorId(idAvaliacao)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -106,6 +117,8 @@ public class GameReview {
             return ResponseEntity.ok(atualizada.get());
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
 
@@ -124,9 +137,13 @@ public class GameReview {
     public ResponseEntity<String> deletarAvaliacao(
             @PathVariable Long idAvaliacao) {
 
-        return avaliacaoService.deletarAvaliacao(idAvaliacao)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return avaliacaoService.deletarAvaliacao(idAvaliacao)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
     }
 
 }
