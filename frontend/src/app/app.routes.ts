@@ -10,7 +10,7 @@ export const routes: Routes = [
 
     {
         path: 'login',
-        loadComponent: () => import ('./jogos/login/login.component').then((m) => m.LoginComponent)
+        loadComponent: () => import ('./pages/login/login.component').then((m) => m.LoginComponent)
     },
 
     {
@@ -23,7 +23,7 @@ export const routes: Routes = [
         loadComponent: () => import ('./pages/jogos-lista/jogos-lista.component').then((m) => m.JogosListaComponent) 
     },
 
-    {
+    /*{
         path: 'jogos/novo',
         canActivate: [authGuard],
         loadComponent: () => import ('./pages/jogo-form/jogo-form.component').then((m) => m.JogoFormComponent)
@@ -37,14 +37,14 @@ export const routes: Routes = [
 
     {
         path: 'jogos/:id',
-        loadComponent: () => import ('./pages/jogo-detalhe.component').then((m) => m.JogoDetalheComponent)
+        loadComponent: () => import ('./pages/jogo-detalhe/jogo-detalhe.component').then((m) => m.JogoDetalheComponent)
     },
 
     {
         path: 'avaliacoes/nova',
         canActivate: [authGuard],
         loadComponent: () => import ('./pages/avaliacao-form/avaliacao-form.component').then((m) => m.AvaliacaoFormComponent)
-    },
+    },*/
 
     {
         path: '**',
