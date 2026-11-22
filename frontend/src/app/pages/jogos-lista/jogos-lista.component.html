@@ -1,0 +1,102 @@
+<section class="criarAvaliacao">
+    <h2>Catálogo de Jogos</h2>
+    <p>Pesquise por título, gênero ou nota mínima no Metacritic e abra um jogo para ver as avaliações.</p>
+
+    @if (mensagemErro()) {
+        <div class="alertaVariavel alerta-erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)">X</button>
+        </div>
+    }
+
+    @if (mensagemSucesso()) {
+        <div class="alertaVariavel alerta-sucesso">
+            <p>{{ mensagemSucesso() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemSucesso.set(null)">X</button>
+        </div>
+    }
+
+    <form [formGroup]="filtroForm" (ngSubmit)="buscarJogos()" class="camposAvaliacoes">
+
+        <div class="campoAvaliacao">
+            <label for="filtroTitulo">Título</label>
+            <input
+                id="filtroTitulo"
+                type="text"
+                class="entradasAvaliacao"
+                formControlName="titulo"
+                placeholder="Ex: Dark Souls, Terraria..."
+            />
+        </div>
+
+        <div class="campoAvaliacao">
+            <label for="filtroGenero">Gênero</label>
+            <input
+                id="filtroGenero"
+                type="text"
+                class="entradasAvaliacao"
+                formControlName="genero"
+                placeholder="Ex: RPG, Ação, Sandbox..."
+            />
+        </div>
+
+        <div class="campoAvaliacao">
+            <label for="filtroMetacritic">Nota Metacritic</label>
+            <input
+                id="filtroMetacritic"
+                type="number"
+                min="0"
+                max="100"
+                class="entradasAvaliacao"
+                formControlName="metacritic"
+                placeholder="De 0 a 100"
+            />
+        </div>
+
+        <div class="campoAvaliacao campo-full">
+            <button type="submit" class="botaoGravarAvaliacao" [disabled]="carregando()">{{ carregando() ? 'Buscando...' : 'Filtrar Jogos' }}</button>
+            <button type="button" class="botao-nav" (click)="limparFiltros()" [disabled]="carregando()">Limpar</button>
+        </div>
+
+    </form>
+
+</section>
+
+<section class="listaAvaliacoes">
+    <h3>Jogos encontrados ({{ jogos().length }})</h3>
+
+    @if(carregando()) {
+        <p>Carregando jogos...</p>
+
+    } @else if (jogos().length === 0) {
+        <p>Nenhum jogo encontrado.</p>
+
+    } @else {
+        <div class="cards-jogos">
+            @for(jogo of jogos(); track jogo.id) {
+                <article class="card-jogo">
+                    <div class="card-jogo-topo">
+                        <h4>{{ jogo.titulo }}</h4>
+                        <span class="card-nota-metacritic">Metacritic: {{ jogo.metacritic }}</span>
+                    </div>
+
+                    <p class="genero-jogo"><strong>Gênero: </strong>{{ jogo.genero }}</p>
+                    <p class="sinopse-jogo">{{ jogo.sinopse }}</p>
+
+                    <div class="acoes-jogo">
+                        <a [routerLink]="['/jogos', jogo.id]" class="botao-link">Ver Detalhes e Avaliações</a>
+
+                        @if (auth.estaLogado()) {
+                            <a [routerLink]="['/jogos', jogo.id, 'editar']" class="botao-link secundario">Editar</a>
+                            <button type="button" class="botao-nav sair" [disabled]="excluindoId() === jogo.id" (click)="excluirJogo(jogo)">{{ excluindoId() === jogo.id ? 'Excluindo...' : 'Excluir' }}</button>
+                        }
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+</section>
