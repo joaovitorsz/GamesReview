@@ -86,8 +86,8 @@
                     <div class="acoes-jogo">
                         <a [routerLink]="['/jogos', jogo.id]" class="botao-link">Ver Detalhes e Avaliações</a>
 
-                        @if (auth.estaLogado()) {
-                            <a [routerLink]="['/jogos', jogo.id, 'editar']" class="botao-link secundario">Editar</a>
+                        @if (auth.isAdmin()) {
+                            <a [routerLink]="['/jogos', jogo.id, 'editar']" class="botao-link secundario"><strong>Editar</strong></a>
                             <button type="button" class="botao-nav sair" [disabled]="excluindoId() === jogo.id" (click)="excluirJogo(jogo)">{{ excluindoId() === jogo.id ? 'Excluindo...' : 'Excluir' }}</button>
                         }
 

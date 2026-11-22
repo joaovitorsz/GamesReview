@@ -15,3 +15,20 @@ export const authGuard: CanActivateFn = (_route, state) => {
         queryParams: {volta: state.url}
     });
 }
+
+export const adminGuard: CanActivateFn = (_route, state) => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
+
+    if(authService.isAdmin()){
+        return true;
+    }
+
+    if(!authService.estaLogado()){
+        return router.createUrlTree(['/login'], {
+            queryParams: {volta: state.url}
+        });
+    }
+
+    return router.createUrlTree(['/jogos']);
+}

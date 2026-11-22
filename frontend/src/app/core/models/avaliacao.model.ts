@@ -3,6 +3,8 @@ export interface Avaliacao {
     avaliador: string;
     nota: number;
     comentario: string;
+    gameId?: number | null;
+    autorEmail?: string | null;
 }
 
 export interface AvaliacaoRequest {

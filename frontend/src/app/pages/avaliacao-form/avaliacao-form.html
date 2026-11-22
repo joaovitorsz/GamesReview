@@ -1,11 +1,11 @@
 <section class="criarAvaliacao">
 
     <div class="acoes-topo">
-        <a [routerLink]="gameId() ? ['/jogos', gameId()] : ['/jogos']" class="botao-nav"><strong>Voltar</strong></a>
+        <a [routerLink]="voltarLink()" class="botao-nav"><strong>Voltar</strong></a>
     </div>
 
-    <h2>Nova Avaliação</h2>
-    <p>Escolha um jogo do catálogo e compartilhe sua nota e opinião com a comunidade.</p>
+    <h2>{{ modoEdicao() ? 'Editar Avaliação' : 'Nova Avaliação' }}</h2>
+    <p>{{ modoEdicao() ? 'Atualize sua nota e comentário sobre este jogo.' : 'Escolha um jogo do catálogo e compartilhe sua nota e opinião com a comunidade.' }}</p>
 
     @if(mensagemErro()){
         <div class="alertaVariavel alerta-erro">
@@ -14,9 +14,9 @@
         </div>
     }
 
-    @if(carregandoJogos()){
-        <p>Carregando lista de jogos...</p>
-    } @else {
+    @if(carregandoJogos() || carregandoAvaliacao()){
+        <p>{{ modoEdicao() ? 'Carregando dados da avaliação...' : 'Carregando lista de jogos...' }}</p>
+    } @else if(!semPermissaoEdicao()){
         <form [formGroup]="form" (ngSubmit)="salvar()" class="camposAvaliacoes">
             <div class="campoAvaliacao">
                 <label for="jogoSelect">Jogo</label>
@@ -51,6 +51,7 @@
                     type="number"
                     min="0"
                     max="10"
+                    step="0.1"
                     class="entradasAvaliacao"
                     formControlName="nota"
                     placeholder="Ex: 9"
@@ -69,8 +70,10 @@
             </div>
 
             <div class="campoAvaliacao">
-                <button type="submit" class="botaoGravarAvaliacao" [disabled]="salvando()">{{ salvando() ? 'Enviando...' : 'Gravar Avaliação' }}</button>
-                <a [routerLink]="gameId() ? ['/jogos', gameId()] : ['/jogos']" class="botao-nav"><strong>Cancelar</strong></a>
+                <button type="submit" class="botaoGravarAvaliacao" [disabled]="salvando()">
+                    {{ salvando() ? 'Salvando...' : (modoEdicao() ? 'Salvar Alterações' : 'Gravar Avaliação') }}
+                </button>
+                <a [routerLink]="voltarLink()" class="botao-nav"><strong>Cancelar</strong></a>
             </div>
         </form>
     }

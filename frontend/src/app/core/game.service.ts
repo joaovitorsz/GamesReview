@@ -42,7 +42,7 @@ export class GameService{
     }
 
     buscarPorId(id: number | string){
-        return this.http.get<Game>(`${this.baseUrl}/id/${id}`).pipe(
+        return this.http.get<Game>(`${this.baseUrl}/jogo/${id}`).pipe(
             retry(1),
             catchError((erro: HttpErrorResponse) => {
                 console.error('Erro ao buscar jogo por ID:', erro.status, erro.message);

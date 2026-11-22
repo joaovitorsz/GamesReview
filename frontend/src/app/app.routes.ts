@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth.guard';
+import { adminGuard, authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
     {
@@ -31,7 +31,7 @@ export const routes: Routes = [
 
     {
         path: 'jogos/:id/editar',
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import ('./pages/jogo-form/jogo-form').then((m) => m.JogoForm)
     },
 
@@ -42,6 +42,12 @@ export const routes: Routes = [
 
     {
         path: 'avaliacoes/nova',
+        canActivate: [authGuard],
+        loadComponent: () => import ('./pages/avaliacao-form/avaliacao-form').then((m) => m.AvaliacaoForm)
+    },
+
+    {
+        path: 'avaliacoes/:id/editar',
         canActivate: [authGuard],
         loadComponent: () => import ('./pages/avaliacao-form/avaliacao-form').then((m) => m.AvaliacaoForm)
     },

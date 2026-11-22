@@ -5,9 +5,16 @@
     </div>
 
     @if(mensagemErro()){
-        <div class="alertaVariavel alerta-Erro">
+        <div class="alertaVariavel alerta-erro">
             <p>{{ mensagemErro() }}</p>
             <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)"><strong>X</strong></button>
+        </div>
+    }
+
+    @if(mensagemSucesso()){
+        <div class="alertaVariavel alerta-sucesso">
+            <p>{{ mensagemSucesso() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemSucesso.set(null)"><strong>X</strong></button>
         </div>
     }
 
@@ -25,7 +32,10 @@
         @if(auth.estaLogado()){
             <div class="acoes-jogo">
                 <a [routerLink]="['/avaliacoes/nova']" [queryParams]="{ gameId: j.id}" class="botao-link">Avaliar este Jogo</a>
-                <a [routerLink]="['/jogos', j.id, 'editar']" class="botao-link secundario">Editar Jogo</a>
+
+                @if(auth.isAdmin()){
+                    <a [routerLink]="['/jogos', j.id, 'editar']" class="botao-link secundario">Editar Jogo</a>
+                }
             </div>
         }
     }
@@ -50,6 +60,25 @@
                     </div>
                     
                     <p class="sinopse-jogo">{{ av.comentario }}</p>
+
+                    @if(podeEditarAvaliacao(av) || podeDeletarAvaliacao(av)){
+                        <div class="acoes-jogo">
+                            @if(podeEditarAvaliacao(av)){
+                                <a [routerLink]="['/avaliacoes', av.id, 'editar']" [queryParams]="{gameId: jogo()?.id}" class="botao-link secundario"><strong>Editar</strong></a>
+                            }
+
+                            @if(podeDeletarAvaliacao(av)){
+                                <button
+                                    type="button"
+                                    class="botao-nav sair"
+                                    [disabled]="excluindoAvaliacaoId() === av.id"
+                                    (click)="excluirAvaliacao(av)">
+                                    
+                                    {{ excluindoAvaliacaoId() === av.id ? 'Excluindo...' : 'Excluir' }}
+                                </button>
+                            }
+                        </div>
+                    }
                 </article>
             }
         </div>

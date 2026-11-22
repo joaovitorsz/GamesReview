@@ -108,7 +108,7 @@ export class JogoForm implements OnInit{
         if(err.status === 401){
           this.mensagemErro.set('Sessão expirada. Faça login novamente para salvar.');
         } else if(err.status === 403){
-          this.mensagemErro.set('Seu perfil não tem permissão para salvar jogos.');
+          this.mensagemErro.set('Seu perfil não tem permissão para editar jogos.');
         } else if(err.status === 400 && typeof err.error === 'string' && err.error.trim()){
           this.mensagemErro.set(err.error);
         } else if(err.status === 0 || err.status >= 500){
