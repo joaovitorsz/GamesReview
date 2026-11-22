@@ -1,0 +1,44 @@
+<section class="criarAvaliacao">
+    <h2>Entrar na conta</h2>
+    <p>Faça login para cadastrar e avaliar jogos.</p>
+
+    @if (mensagemErro()){
+        <div class="alertaVariavel alerta-erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)">X</button>
+        </div>
+    }    
+    
+        <form [formGroup]="form" (ngSubmit)="entrar()" class="camposAvaliacoes">
+            <div class="campoAvaliacao">
+                <label for="loginEmail">E-mail</label>
+                <input
+                    id="loginEmail"
+                    type="email"
+                    class="entradasAvaliacao"
+                    formControlName="email"
+                    placeholder="seu@email.com"
+                />
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="loginSenha">Senha</label>
+                <input
+                    id="loginSenha"
+                    type="password"
+                    class="entradasAvaliacao"
+                    formControlName="senha"
+                    placeholder="Sua senha"
+                />
+            </div>
+
+            <div class="campoAvaliacao campo-full">
+                <button type="submit" class="botaoGravarAvaliacao" [disabled]="carregando()"> {{ carregando() ? 'Entrando...' : 'Entrar' }}</button>
+            </div>
+        </form>
+
+        <p class="rodape-form">
+            Ainda não tem conta? <a routerLink="/registro" class="link-destaque">Cadastre-se aqui</a>
+        </p>
+
+</section>

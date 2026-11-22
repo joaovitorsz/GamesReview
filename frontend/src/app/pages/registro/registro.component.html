@@ -1,0 +1,63 @@
+<section class="criarAvaliacao">
+    <h2>Criar Conta</h2>
+    <p>Cadastre-se para publicar jogos e deixar suas avaliações na comunidade.</p>
+
+    @if (mensagemErro()){
+        <div class="alertaVariavel alerta-erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)">X</button>
+        </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="cadastrar()" class="camposAvaliacoes">
+        <div class="campoAvaliacao">
+            <label for="regNome">Nome</label>
+            <input
+                id="regNome"
+                type="text"
+                class="entradasAvaliacao"
+                formControlName="nome"
+                placeholder="Seu nome"
+            />
+        </div>
+
+        <div class="campoAvaliacao">
+            <label for="regEmail">E-mail</label>
+            <input
+                id="regEmail"
+                type="email"
+                class="entradasAvaliacao"
+                formControlName="email"
+                placeholder="seu@email.com"
+            />
+        </div>
+
+        <div class="campoAvaliacao">
+            <label for="regSenha">Senha</label>
+            <input
+                id="regSenha"
+                type="password"
+                class="entradasAvaliacao"
+                formControlName="senha"
+                placeholder="Crie uma senha"
+            />
+        </div>
+
+        <div class="campoAvaliacao">
+            <label for="regRole">Tipo de Conta</label>
+            <select id="regRole" class="entradasAvaliacao" formControlName="role">
+                <option value="USER">USER (Comum)</option>
+                <option value="ADMIN">ADMIN (Administrador)</option>
+            </select>
+        </div>
+
+        <div class="campoAvaliacao campo-full">
+            <button type="submit" class="botaoGravarAvaliacao" [disabled]="carregando()">{{ carregando() ? 'Cadastrando...' : 'Cadastrar' }}</button>
+        </div>
+    </form>
+
+    <p class="rodape-form">
+        Já possui uma conta? <a routerLink="/login" class="link-destaque">Faer Login</a>
+    </p>
+
+</section>
