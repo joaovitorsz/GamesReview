@@ -8,14 +8,14 @@ import { HttpErrorResponse } from "@angular/common/http";
 
 
 @Component({
-    selector: 'app-jogos-lista',
     imports: [ReactiveFormsModule, RouterLink],
-    templateUrl: './jogos-lista.component.html',
-    styleUrl: '../../app.css',
+    selector: 'app-jogos-lista',
+    templateUrl: './jogos-lista.html',
+    styleUrls: ['../../app.css', './jogos-lista.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class JogosListaComponent implements OnInit{
+export class JogosLista implements OnInit{
     private fb = inject(FormBuilder);
     private gameService = inject(GameService);
     protected auth = inject(AuthService);

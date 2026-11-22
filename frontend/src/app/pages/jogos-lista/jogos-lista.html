@@ -5,14 +5,14 @@
     @if (mensagemErro()) {
         <div class="alertaVariavel alerta-erro">
             <p>{{ mensagemErro() }}</p>
-            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)">X</button>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)"><strong>X</strong></button>
         </div>
     }
 
     @if (mensagemSucesso()) {
         <div class="alertaVariavel alerta-sucesso">
             <p>{{ mensagemSucesso() }}</p>
-            <button type="button" class="botaoFecharAlerta" (click)="mensagemSucesso.set(null)">X</button>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemSucesso.set(null)"><strong>X</strong></button>
         </div>
     }
 
@@ -55,7 +55,7 @@
 
         <div class="campoAvaliacao campo-full">
             <button type="submit" class="botaoGravarAvaliacao" [disabled]="carregando()">{{ carregando() ? 'Buscando...' : 'Filtrar Jogos' }}</button>
-            <button type="button" class="botao-nav" (click)="limparFiltros()" [disabled]="carregando()">Limpar</button>
+            <button type="button" class="botao-nav" (click)="limparFiltros()" [disabled]="carregando()"><strong>Limpar</strong></button>
         </div>
 
     </form>

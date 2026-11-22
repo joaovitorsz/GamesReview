@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http"
 import { inject, Injectable } from "@angular/core";
 import { catchError, retry, throwError } from "rxjs";
 import { Game, GameRequest } from "./models/game.model";
+import { environment } from "../../environments/environment";
 
 
 export interface FiltroJogos {
@@ -13,7 +14,7 @@ export interface FiltroJogos {
 @Injectable({providedIn: 'root'})
 export class GameService{
     private http = inject(HttpClient);
-    private baseUrl = `@{environment.apiUrl}/game/review`;
+    private baseUrl = `${environment.apiUrl}/game/review`;
 
     listar(filtros?: FiltroJogos){
         let params = new HttpParams();

@@ -8,7 +8,7 @@ import { erroInterceptor } from './core/erro.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter((routes), withComponentInputBinding()),
+    provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
       withInterceptors([authInterceptor, erroInterceptor])
     )

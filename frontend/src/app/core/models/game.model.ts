@@ -10,5 +10,5 @@ export interface GameRequest {
     titulo: string;
     genero: string;
     metacritic: number;
-    sinopse: number;
+    sinopse: string;
 }

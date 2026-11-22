@@ -3,7 +3,7 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthResponse, LoginRequest, RegistroRequest } from "./models/auth.model";
 import { tap } from "rxjs";
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 
 const STORAGE_KEY = 'gamesreview_auth';
 

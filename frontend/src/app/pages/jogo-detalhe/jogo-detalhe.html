@@ -1,0 +1,58 @@
+<section class="criarAvaliacao">
+
+    <div class="acoes-topo">
+        <a routerLink="/jogos" class="botao-nav">Voltar ao Catálogo</a>
+    </div>
+
+    @if(mensagemErro()){
+        <div class="alertaVariavel alerta-Erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)"><strong>X</strong></button>
+        </div>
+    }
+
+    @if(carregandoJogo()){
+        <p>Carregando detalhes do jogo...</p>
+    } @else if (jogo(); as j){
+        <div class="card-jogo-topo">
+            <h2>{{ j.titulo }}</h2>
+            <span class="card-nota-metacritic">Metacritic: {{ j.metacritic }}</span>
+        </div>
+
+        <p class="genero-jogo"><strong>Gênero: </strong>{{ j.genero }}</p>
+        <p class="sinopse-jogo">{{ j.sinopse }}</p>
+
+        @if(auth.estaLogado()){
+            <div class="acoes-jogo">
+                <a [routerLink]="['/avaliacoes/nova']" [queryParams]="{ gameId: j.id}" class="botao-link">Avaliar este Jogo</a>
+                <a [routerLink]="['/jogos', j.id, 'editar']" class="botao-link secundario">Editar Jogo</a>
+            </div>
+        }
+    }
+    
+</section>
+
+<section class="listaAvaliacoes">
+
+    <h3>Avaliações da Comunidade ({{ avaliacoes().length }})</h3>
+
+    @if(carregandoAvaliacoes()){
+        <p>Carregando avaliações...</p>
+    } @else if(avaliacoes().length === 0){
+        <p>Este jogo ainda não possui avaliações. Seja o primeiro a avaliar!</p>
+    } @else{
+        <div class="cards-jogos">
+            @for (av of avaliacoes(); track av.id){
+                <article class="card-jogo">
+                    <div class="card-jogo-topo">
+                        <h4>{{ av.avaliador }}</h4>
+                        <span class="card-nota-metacritic">Nota: {{ av.nota }}/10</span>
+                    </div>
+                    
+                    <p class="sinopse-jogo">{{ av.comentario }}</p>
+                </article>
+            }
+        </div>
+    }
+
+</section>

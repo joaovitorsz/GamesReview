@@ -1,0 +1,77 @@
+<section class="criarAvaliacao">
+
+    <div class="acoes-topo">
+        <a [routerLink]="gameId() ? ['/jogos', gameId()] : ['/jogos']" class="botao-nav"><strong>Voltar</strong></a>
+    </div>
+
+    <h2>Nova Avaliação</h2>
+    <p>Escolha um jogo do catálogo e compartilhe sua nota e opinião com a comunidade.</p>
+
+    @if(mensagemErro()){
+        <div class="alertaVariavel alerta-erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)"><strong>X</strong></button>
+        </div>
+    }
+
+    @if(carregandoJogos()){
+        <p>Carregando lista de jogos...</p>
+    } @else {
+        <form [formGroup]="form" (ngSubmit)="salvar()" class="camposAvaliacoes">
+            <div class="campoAvaliacao">
+                <label for="jogoSelect">Jogo</label>
+                <select 
+                id="jogoSelect" 
+                class="entradasAvaliacao" 
+                formControlName="gameId"
+                >
+                    <option value="" disabled>Selecione um jogo:</option>
+                    @for(jogo of jogos(); track jogo.id){
+                        <option [value]="jogo.id">{{ jogo.titulo }} ({{ jogo.genero}})</option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="avaliadorInput">Avaliador</label>
+                <input
+                    id="avaliadorInput"
+                    type="text"
+                    class="entradasAvaliacao"
+                    formControlName="avaliador"
+                    placeholder="Seu nome ou apelido"
+                />
+            </div>  
+
+            <div class="campoAvaliacao">
+                <label for="notaInput">Nota (0 a 10)</label>
+                <input
+                    id="notaInput"
+                    type="number"
+                    min="0"
+                    max="10"
+                    class="entradasAvaliacao"
+                    formControlName="nota"
+                    placeholder="Ex: 9"
+                />
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="comentarioInput">Comentário</label>
+                <textarea
+                    id="comentarioInput"
+                    rows="4"
+                    class="entradasAvaliacao"
+                    formControlName="comentario"
+                    placeholder="Conte o que achou da gameplay, história, trilha sonora ou, o que tenha te chamado a atenção."
+                ></textarea>
+            </div>
+
+            <div class="campoAvaliacao">
+                <button type="submit" class="botaoGravarAvaliacao" [disabled]="salvando()">{{ salvando() ? 'Enviando...' : 'Gravar Avaliação' }}</button>
+                <a [routerLink]="gameId() ? ['/jogos', gameId()] : ['/jogos']" class="botao-nav"><strong>Cancelar</strong></a>
+            </div>
+        </form>
+    }
+</section>

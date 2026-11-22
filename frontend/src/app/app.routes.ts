@@ -10,41 +10,41 @@ export const routes: Routes = [
 
     {
         path: 'login',
-        loadComponent: () => import ('./pages/login/login.component').then((m) => m.LoginComponent)
+        loadComponent: () => import ('./pages/login/login').then((m) => m.Login)
     },
 
     {
         path: 'registro',
-        loadComponent: () => import ('./pages/registro/registro.component').then((m) => m.RegistroComponent)
+        loadComponent: () => import ('./pages/registro/registro').then((m) => m.Registro)
     },
 
     {
         path: 'jogos',
-        loadComponent: () => import ('./pages/jogos-lista/jogos-lista.component').then((m) => m.JogosListaComponent) 
+        loadComponent: () => import ('./pages/jogos-lista/jogos-lista').then((m) => m.JogosLista) 
     },
 
-    /*{
+    {
         path: 'jogos/novo',
         canActivate: [authGuard],
-        loadComponent: () => import ('./pages/jogo-form/jogo-form.component').then((m) => m.JogoFormComponent)
+        loadComponent: () => import ('./pages/jogo-form/jogo-form').then((m) => m.JogoForm)
     },
 
     {
         path: 'jogos/:id/editar',
         canActivate: [authGuard],
-        loadComponent: () => import ('./pages/jogo-form/jogo-form.component').then((m) => m.JogoFormComponent)
+        loadComponent: () => import ('./pages/jogo-form/jogo-form').then((m) => m.JogoForm)
     },
 
     {
         path: 'jogos/:id',
-        loadComponent: () => import ('./pages/jogo-detalhe/jogo-detalhe.component').then((m) => m.JogoDetalheComponent)
+        loadComponent: () => import ('./pages/jogo-detalhe/jogo-detalhe').then((m) => m.JogoDetalhe)
     },
 
     {
         path: 'avaliacoes/nova',
         canActivate: [authGuard],
-        loadComponent: () => import ('./pages/avaliacao-form/avaliacao-form.component').then((m) => m.AvaliacaoFormComponent)
-    },*/
+        loadComponent: () => import ('./pages/avaliacao-form/avaliacao-form').then((m) => m.AvaliacaoForm)
+    },
 
     {
         path: '**',
