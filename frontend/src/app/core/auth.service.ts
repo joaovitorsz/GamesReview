@@ -53,6 +53,10 @@ export class AuthService {
         this.sessaoSignal.set(sessaoFinal);
     }
 
+    atualizarSessao(resposta: AuthResponse){
+        this.salvarSessao(resposta);
+    }
+
     private lerSessaoInicial(): AuthResponse | null{
         try{
             const bruto = localStorage.getItem(STORAGE_KEY);

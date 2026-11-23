@@ -1,0 +1,35 @@
+.badge-perfil {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid var(--cor-texto-suave);
+    color: var(--cor-texto);
+    vertical-align: middle;
+}
+
+.badge-perfil.admin {
+    border-color: var(--cor-primaria);
+    color: var(--cor-primaria);
+}
+
+.zona-perigo {
+    max-width: 56rem;
+    margin: 2.5rem auto 0;
+    padding: 1.5rem;
+    border: 2px solid var(--cor-erro);
+    border-radius: var(--borda-raio);
+    text-align: center;
+    background: rgba(224, 67, 60, 0.06);
+}
+
+.zona-perigo h3 {
+    color: var(--cor-erro);
+    margin-bottom: 0.5rem;
+}
+
+.zona-perigo p {
+    margin-bottom: 1.2rem;
+}

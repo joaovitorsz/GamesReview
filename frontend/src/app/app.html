@@ -14,12 +14,23 @@
       @if (auth.estaLogado()) {
         <a routerLink="/jogos/novo" class="botao-nav">Novo Jogo</a>
         <a routerLink="/avaliacoes/nova" class="botao-nav">Nova Avaliação</a>
+        <a routerLink="/perfil" class="botao-nav">Meu Perfil</a>
         <button type="button" class="botao-nav sair" (click)="sair()">Sair</button>
       } @else {
         <a routerLink="/login" class="botao-nav">Entrar</a>
         <a routerLink="/registro" class="botao-nav">Criar Conta</a>
       }
     </nav>
+
+    @if(auth.usuario(); as u){
+      <p class="usuario-logado">
+        Logado como <strong>{{ u.nome }}</strong>
+        @if(auth.isAdmin()){
+          <span class="tag-admin">ADMIN</span>
+        }
+      </p>
+    }
+
   </header>
 
   <hr>

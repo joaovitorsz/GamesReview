@@ -53,6 +53,12 @@ export const routes: Routes = [
     },
 
     {
+        path: 'perfil',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/perfil/perfil').then((m) => m.Perfil)
+    },
+
+    {
         path: '**',
         redirectTo: 'jogos'
     }

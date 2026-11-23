@@ -1,0 +1,99 @@
+<section class="criarAvaliacao">
+
+    <div class="acoes-topo">
+        <a routerLink="/jogos" class="botao-nav"><strong>Voltar ao Catálogo</strong></a>
+    </div>
+
+    <h2>Meu Perfil</h2>
+    <p>
+        Gerencie suas informações de conta.
+        @if (auth.usuario(); as u) {
+            <span class="badge-perfil" [class.admin]="auth.isAdmin()">
+                {{ auth.isAdmin() ? 'ADMIN' : u.role }}
+            </span>
+        }
+    </p>
+
+    @if (mensagemErro()) {
+        <div class="alertaVariavel alerta-erro">
+            <p>{{ mensagemErro() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemErro.set(null)"><strong>X</strong></button>
+        </div>
+    }
+
+    @if (mensagemSucesso()) {
+        <div class="alertaVariavel alerta-sucesso">
+            <p>{{ mensagemSucesso() }}</p>
+            <button type="button" class="botaoFecharAlerta" (click)="mensagemSucesso.set(null)"><strong>X</strong></button>
+        </div>
+    }
+
+    @if (carregando()) {
+        <p>Carregando dados do perfil...</p>
+    } @else {
+        <form [formGroup]="form" (ngSubmit)="salvar()" class="camposAvaliacoes">
+            <div class="campoAvaliacao">
+                <label for="perfilNome">Nome</label>
+                <input
+                    id="perfilNome"
+                    type="text"
+                    class="entradasAvaliacao"
+                    formControlName="nome"
+                    placeholder="Seu nome"/>
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="perfilEmail">E-mail</label>
+                <input
+                    id="perfilEmail"
+                    type="email"
+                    class="entradasAvaliacao"
+                    formControlName="email"
+                    placeholder="seu@email.com"/>
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="perfilSenha">Nova Senha (opcional)</label>
+                <input
+                    id="perfilSenha"
+                    type="password"
+                    class="entradasAvaliacao"
+                    formControlName="senha"
+                    placeholder="Deixe em branco para manter a atual"/>
+            </div>
+
+            <div class="campoAvaliacao">
+                <label for="perfilConfirmarSenha">Confirmar Nova Senha</label>
+                <input
+                    id="perfilConfirmarSenha"
+                    type="password"
+                    class="entradasAvaliacao"
+                    formControlName="confirmarSenha"
+                    placeholder="Repita a nova senha"/>
+            </div>
+
+            <div class="campoAvaliacao campo-full">
+                <button type="submit" class="botaoGravarAvaliacao" [disabled]="salvando() || excluindo()">
+
+                    {{ salvando() ? 'Salvando...' : 'Salvar Alterações' }}
+                
+                </button>
+            </div>
+        </form>
+
+        <div class="zona-perigo">
+            <h3>Atenção</h3>
+            <p>Ao excluir sua conta, você perderá o acesso imediato e não poderá mais editar suas avaliações.</p>
+            <button
+                type="button"
+                class="botao-nav sair"
+                [disabled]="excluindo() || salvando()"
+                (click)="excluirConta()">
+
+                {{ excluindo() ? 'Excluindo conta...' : 'Excluir Minha Conta' }}
+
+            </button>
+        </div>
+    }
+
+</section>
