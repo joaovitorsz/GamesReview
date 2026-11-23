@@ -1,8 +1,8 @@
 # 🎮 GamesReview
 
-> 📅 **Última atualização:** 20/11/2026
+> 📅 **Última atualização:** 22/11/2026
 
-Plataforma para gerenciamento e avaliação de jogos digitais. O projeto conta com uma **API REST completa em Java com Spring Boot**, evoluída de um armazenamento em memória até uma arquitetura em camadas com persistência em **PostgreSQL**, autenticação **JWT**, controle de acesso por perfis (`USER` e `ADMIN`) e configuração de CORS pronta para integração com o frontend em **Angular**.
+Plataforma full-stack para gerenciamento e avaliação de jogos digitais. O projeto conta com uma **API REST completa em Java com Spring Boot**, evoluída de um armazenamento em memória até uma arquitetura em camadas com persistência em **PostgreSQL**, autenticação **JWT**, controle de acesso por perfis (`USER` e `ADMIN`), integrada a um frontend em **Angular**.
 
 ---
 
@@ -25,21 +25,27 @@ Plataforma para gerenciamento e avaliação de jogos digitais. O projeto conta c
 - **Autenticação Stateless com JWT:** Geração e validação de tokens assinados com **HMAC-SHA256** (`JwtService`) e interceptação de requisições via `JwtAuthenticationFilter` (`OncePerRequestFilter`).
 - **Criptografia de Senhas:** Armazenamento seguro de senhas com **BCrypt** (`BCryptPasswordEncoder`).
 - **Controle de Acesso por Perfil (RBAC):** Entidade `Usuario` implementando `UserDetails` e enum `Role` (`USER` e `ADMIN`), liberando o cadastro de jogos e avaliações para usuários autenticados e restringindo a edição e exclusão de jogos no catálogo a administradores.
-- **Gestão do Próprio Perfil (`/usuarios/me`):** Rotas autenticadas via `@AuthenticationPrincipal` para visualização, edição de dados (com renovação automática do token JWT) e exclusão da própria conta.
+- **Gestão do Próprio Perfil (`/usuarios/me`):** Rotas autenticadas via `@AuthenticationPrincipal` para visualização, edição de dados (com renovação automática do token JWT) e exclusão da própria conta (desvinculando avaliações previamente para manter a integridade referencial no banco).
 - **CORS para Frontend:** Configuração de `CorsConfigurationSource` liberando requisições a partir do Angular (`http://localhost:4200`).
+
+### 🟡 Parte 4: Frontend Full-Stack em Angular
+- **Arquitetura Moderna:** Standalone Components, Signals (`signal`, `computed`), Reactive Forms e Lazy Loading nas rotas.
+- **Segurança no Cliente:** `AuthService` com persistência em `localStorage`, interceptors (`authInterceptor` e `erroInterceptor`) e guards de rota (`authGuard` e `adminGuard`).
+- **Telas & Fluxos:** Catálogo em cards com filtros, detalhes do jogo, criação/edição de jogos e avaliações, login, registro e página **Meu Perfil** com identificação do usuário logado no cabeçalho.
+- **Visual & Transições:** Tema escuro responsivo com variáveis CSS em tons areia/dourado e transições suaves entre telas com a **View Transitions API** do Angular Router.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Linguagem:** Java 17
-- **Framework:** Spring Boot 3.2.1
+- **Linguagem:** Java 17 & TypeScript
+- **Frameworks:** Spring Boot 3.2.1 & Angular (CLI 22.2.1)
 - **Segurança:** Spring Security & JWT (`jjwt 0.11.5`)
 - **Persistência:** Spring Data JPA / Hibernate
 - **Banco de Dados:** PostgreSQL
+- **Estilização:** HTML5 & CSS3 (Grid, Flexbox, Variáveis CSS, Keyframes, View Transitions)
 - **Utilitários & Validação:** Spring Boot Validation & Lombok
-- **Gerenciador de Dependências:** Maven
-- **Ferramentas de Teste:** Postman
+- **Gerenciadores & Ferramentas:** Maven, npm e Postman
 
 ---
 
@@ -48,8 +54,8 @@ Plataforma para gerenciamento e avaliação de jogos digitais. O projeto conta c
 | Perfil | Permissões |
 | :--- | :--- |
 | **Público (sem login)** | Cadastro (`/auth/register`), login (`/auth/login`) e consultas (`GET`) de jogos e avaliações. |
-| **`USER` (autenticado)** | Todas as permissões públicas + cadastrar novos jogos + criar, editar e excluir avaliações + gerenciar a própria conta (`/usuarios/me`). |
-| **`ADMIN` (autenticado)** | Todas as permissões de `USER` + editar e excluir jogos no catálogo. |
+| **`USER` (autenticado)** | Todas as permissões públicas + cadastrar novos jogos + criar, editar e excluir **suas próprias** avaliações + gerenciar a própria conta (`/usuarios/me`). |
+| **`ADMIN` (autenticado)** | Todas as permissões de `USER` + editar e excluir jogos no catálogo + excluir avaliações de qualquer usuário. |
 
 > As rotas protegidas exigem o envio do token JWT no header HTTP:
 > `Authorization: Bearer <seu_token_jwt>`
@@ -71,13 +77,14 @@ Plataforma para gerenciamento e avaliação de jogos digitais. O projeto conta c
 | :--- | :--- | :--- | :--- |
 | `GET` | `/usuarios/me` | Autenticado | Retorna os dados do usuário logado (`nome`, `email` e `role`). |
 | `PUT` | `/usuarios/me` | Autenticado | Atualiza `nome`, `email` e/ou `senha` do usuário logado e retorna um novo token JWT. |
-| `DELETE` | `/usuarios/me` | Autenticado | Exclui permanentemente a conta do usuário logado. |
+| `DELETE` | `/usuarios/me` | Autenticado | Desvincula as avaliações do usuário e exclui permanentemente a conta. |
 
 ### 🕹️ Gestão de Jogos (`/game/review`)
 
 | Método | Endpoint | Acesso | Descrição |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/game/review/listar-jogos` | Público | Lista os jogos cadastrados no banco de dados (com suporte a filtros). |
+| `GET` | `/game/review/jogo/{id}` | Público | Retorna os detalhes de um jogo específico por ID. |
 | `POST` | `/game/review/gravar-jogo` | Autenticado | Cadastra um novo jogo na base de dados. |
 | `PUT` | `/game/review/editar-jogo/{id}` | `ADMIN` | Atualiza as informações de um jogo existente. |
 | `DELETE` | `/game/review/deletar-jogo/{id}` | `ADMIN` | Remove um jogo e suas avaliações vinculadas do banco. |
@@ -87,15 +94,16 @@ Plataforma para gerenciamento e avaliação de jogos digitais. O projeto conta c
 | Método | Endpoint | Acesso | Descrição |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/game/review/listar-avaliacoes/{id}` | Público | Lista as avaliações cadastradas para um jogo específico. |
+| `GET` | `/game/review/avaliacao/{id}` | Público | Retorna os dados de uma avaliação específica por ID. |
 | `POST` | `/game/review/gravar-avaliacao/{id}` | Autenticado | Registra uma nova avaliação atrelada a um jogo específico. |
-| `PUT` | `/game/review/editar-avaliacao/{id}` | Autenticado | Atualiza uma avaliação existente. |
-| `DELETE` | `/game/review/deletar-avaliacao/{id}` | Autenticado | Remove uma avaliação do banco de dados. |
+| `PUT` | `/game/review/editar-avaliacao/{id}` | Autor | Atualiza nota e comentário de uma avaliação (permitido ao autor). |
+| `DELETE` | `/game/review/deletar-avaliacao/{id}` | Autor / `ADMIN` | Remove uma avaliação do banco de dados. |
 
 ---
 
 ## 🗄️ Configuração do Ambiente
 
-Para rodar a aplicação localmente, certifique-se de ter o **Java 17+**, **Maven** e o **PostgreSQL** rodando. Em seguida, crie o banco `games_review_db` e configure o arquivo `src/main/resources/application.properties`:
+Para rodar a aplicação localmente, certifique-se de ter **Java 17+**, **Maven**, **PostgreSQL**, **Node.js (LTS)** e **Angular CLI** instalados. Crie o banco `games_review_db` no PostgreSQL e configure `backend/src/main/resources/application.properties`:
 
 ```properties
 server.port=7979
@@ -123,11 +131,17 @@ jwt.expiration=86400000
 git clone https://github.com/joaovitorsz/GamesReview.git
 cd GamesReview
 
-# Rodar a aplicação com Maven Wrapper
+# 1. Rodar o backend (porta 7979)
+cd backend
 ./mvnw spring-boot:run
+
+# 2. Em outro terminal, rodar o frontend (porta 4200)
+cd frontend
+npm install
+ng serve
 ```
 
-A API ficará disponível em `http://localhost:7979`.
+A API ficará disponível em `http://localhost:7979` e a aplicação web em `http://localhost:4200`.
 
 ---
 
@@ -142,4 +156,4 @@ A coleção completa de requisições está disponível no arquivo `GamesReview.
 
 ---
 
-*Documentação publicada e atualizada em **20/11/2026**.*
+*Documentação publicada e atualizada em **22/11/2026**.*

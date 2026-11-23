@@ -33,3 +33,7 @@
 .zona-perigo p {
     margin-bottom: 1.2rem;
 }
+
+.camposAvaliacoes .campoAvaliacao:first-child {
+    grid-column: auto;
+}

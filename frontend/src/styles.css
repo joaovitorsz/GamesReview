@@ -1,9 +1,10 @@
-body{
-    margin: 0;
-    padding: 0;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-:root{
+:root {
     --cor-primaria: #e0d1ac;
     --cor-primaria-escura: #c29837;
     --cor-sucesso: #5fb981;
@@ -14,7 +15,65 @@ body{
     --cor-card-jogo: #4d4a4a79;
     --cor-card-avaliacao: #b1abab62;
     --borda-raio: 16px;
-    --sombra-card: 0 0 15px rgba(242,239,219,0.08);
-    --sombra-card-hover: 0 0 30px rgba(242,239,219,0.36);
+    --sombra-card: 0 0 15px rgba(242, 239, 219, 0.08);
+    --sombra-card-hover: 0 0 30px rgba(242, 239, 219, 0.36);
     --espaco: 1.5rem;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/*----------Transição entre rotas----------*/
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}
+
+::view-transition-group(conteudo-pagina) {
+    animation-duration: 200ms;
+}
+
+::view-transition-old(conteudo-pagina) {
+    height: auto;
+    animation: sair-tela 200ms ease-in both;
+}
+
+::view-transition-new(conteudo-pagina) {
+    height: auto;
+    animation: entrar-tela 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sair-tela {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-14px);
+    }
+}
+
+@keyframes entrar-tela {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(conteudo-pagina),
+    ::view-transition-new(conteudo-pagina) {
+        animation: none;
+    }
 }
