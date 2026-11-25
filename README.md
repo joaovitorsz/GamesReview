@@ -1,6 +1,7 @@
 # 🎮 GamesReview
 
-> 📅 **Última atualização:** 22/11/2026
+> 📅 **Última atualização:** 24/11/2026
+> 🎥 **Vídeo de apresentação:** [Assistir no YouTube](https://youtu.be/ljASFlPRzEs)
 
 Plataforma full-stack para gerenciamento e avaliação de jogos digitais. O projeto conta com uma **API REST completa em Java com Spring Boot**, evoluída de um armazenamento em memória até uma arquitetura em camadas com persistência em **PostgreSQL**, autenticação **JWT**, controle de acesso por perfis (`USER` e `ADMIN`), integrada a um frontend em **Angular**.
 
@@ -128,7 +129,7 @@ jwt.expiration=86400000
 
 ```bash
 # Clonar o repositório
-git clone https://github.com/joaovitorsz/GamesReview.git
+git clone [https://github.com/joaovitorsz/GamesReview.git](https://github.com/joaovitorsz/GamesReview.git)
 cd GamesReview
 
 # 1. Rodar o backend (porta 7979)
@@ -156,4 +157,4 @@ A coleção completa de requisições está disponível no arquivo `GamesReview.
 
 ---
 
-*Documentação publicada e atualizada em **22/11/2026**.*
+*Documentação publicada e atualizada em **24/11/2026**.*
