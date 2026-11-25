@@ -1,29 +1,26 @@
 {
   "info": {
-    "_postman_id": "3bba0918-61d1-45ad-8c09-19316bb93e88",
-    "name": "GamesReview API",
-    "description": "Coleção oficial de testes da API REST GamesReview (Spring Boot + PostgreSQL + Spring Security + JWT).\n\nComo usar:\n1. Execute 'Registrar-usuario' ou 'Login-usuario' na pasta Usuario.\n2. O token JWT retornado será salvo automaticamente na variável {{token}}.\n3. Todas as rotas protegidas já estão configuradas com Bearer Token usando {{token}}.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "_postman_id": "847c799c-a8e6-4989-aacf-257b53b34691",
+    "name": "GamesReview",
+    "description": "Coleção completa da API REST GamesReview (Spring Boot 3 + PostgreSQL + JWT + RBAC).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58532386",
+    "_collection_link": "https://go.postman.co/collection/58532386-847c799c-a8e6-4989-aacf-257b53b34691?source=collection_link"
   },
   "item": [
     {
       "name": "Usuario",
       "item": [
         {
-          "name": "Registrar-usuario",
+          "name": "Registrar-usuario (USER)",
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const data = pm.response.json();",
-                  "    if (data.token) {",
-                  "        pm.collectionVariables.set(\"token\", data.token);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));\nconst json = pm.response.json();\nif (json && json.token) {\n    pm.collectionVariables.set('token', json.token);\n    console.log('Token salvo automaticamente!');\n}"
+                ]
               }
             }
           ],
@@ -32,7 +29,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"João Admin\",\n  \"email\": \"joao@email.com\",\n  \"senha\": \"123\",\n  \"role\": \"ADMIN\"\n}",
+              "raw": "{\n  \"nome\": \"Lucas teste\",\n  \"email\": \"lucasteste@email.com\",\n  \"senha\": \"1234\",\n  \"role\": \"USER\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -40,10 +37,52 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/register",
+              "raw": "http://localhost:7979/auth/register",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar-usuario (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));\nconst json = pm.response.json();\nif (json && json.token) {\n    pm.collectionVariables.set('token', json.token);\n    console.log('Token ADMIN salvo automaticamente!');\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Admin\",\n  \"email\": \"admin@email.com\",\n  \"senha\": \"1234\",\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:7979/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "7979",
               "path": [
                 "auth",
                 "register"
@@ -58,15 +97,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const data = pm.response.json();",
-                  "    if (data.token) {",
-                  "        pm.collectionVariables.set(\"token\", data.token);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\nconst json = pm.response.json();\npm.test('Retornou token JWT', () => pm.expect(json.token).to.be.a('string').and.not.empty);\nif (json && json.token) {\n    pm.collectionVariables.set('token', json.token);\n}"
+                ]
               }
             }
           ],
@@ -75,7 +109,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"joao@email.com\",\n  \"senha\": \"123\"\n}",
+              "raw": "{\n  \"email\": \"joaoadmin@email.com\",\n  \"senha\": \"1234\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -83,10 +117,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "http://localhost:7979/auth/login",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "auth",
                 "login"
@@ -97,6 +133,20 @@
         },
         {
           "name": "Ver-usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\nconst json = pm.response.json();\npm.test('Dados do perfil presentes', () => {\n    pm.expect(json).to.have.property('nome');\n    pm.expect(json).to.have.property('email');\n    pm.expect(json).to.have.property('role');\n});"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "auth": {
               "type": "bearer",
@@ -110,11 +160,22 @@
             },
             "method": "GET",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "{{baseUrl}}/usuarios/me",
+              "raw": "http://localhost:7979/usuarios/me",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "usuarios",
                 "me"
@@ -129,15 +190,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const data = pm.response.json();",
-                  "    if (data.token) {",
-                  "        pm.collectionVariables.set(\"token\", data.token);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\nconst json = pm.response.json();\nif (json && json.token) {\n    pm.collectionVariables.set('token', json.token);\n    console.log('Token renovado salvo automaticamente!');\n}"
+                ]
               }
             }
           ],
@@ -156,7 +212,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"João Vitor\",\n  \"email\": \"joao.vitor@email.com\"\n}",
+              "raw": "{\n  \"nome\": \"João admin Atualizado\",\n  \"email\": \"joaoadmin@email.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -164,10 +220,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/usuarios/me",
+              "raw": "http://localhost:7979/usuarios/me",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "usuarios",
                 "me"
@@ -178,6 +236,17 @@
         },
         {
           "name": "Deletar-usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\npm.collectionVariables.set('token', '');"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -192,10 +261,12 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/usuarios/me",
+              "raw": "http://localhost:7979/usuarios/me",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "usuarios",
                 "me"
@@ -211,18 +282,83 @@
       "item": [
         {
           "name": "Listar-Jogos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\npm.test('Retornou uma lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "{{baseUrl}}/game/review/listar-jogos",
+              "raw": "http://localhost:7979/game/review/listar-jogos",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "listar-jogos"
+              ],
+              "query": [
+                {
+                  "key": "metacritic",
+                  "value": "90",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar-Jogo-Por-Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\npm.test('Jogo possui título', () => pm.expect(pm.response.json()).to.have.property('titulo'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:7979/game/review/jogo/9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "7979",
+              "path": [
+                "game",
+                "review",
+                "jogo",
+                "9"
               ]
             }
           },
@@ -230,6 +366,17 @@
         },
         {
           "name": "Gravar-Jogo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Jogo criado (200/201)', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));\nconst json = pm.response.json();\nif (json && json.id) {\n    pm.collectionVariables.set('gameId', String(json.id));\n    console.log('gameId salvo:', json.id);\n}"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -245,7 +392,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"titulo\": \"Hollow Knight\",\n  \"genero\": \"Metroidvania\",\n  \"metacritic\": 90,\n  \"sinopse\": \"Desça às profundezas do reino arruinado de Hallownest, enfrentando insetos corrompidos, desvendando segredos antigos e dominando novas habilidades em um mundo desenhado à mão.\"\n}",
+              "raw": "{\n  \"titulo\": \"Terraria\",\n  \"genero\": \"Sandbox\",\n  \"metacritic\": 81,\n  \"sinopse\": \"Jogo eletrônico de RPG de ação, aventura e sandbox em 2D criado pela Re-Logic e lançado em 2011. O jogo foca em exploração, mineração, construção e combate contra chefes em mundos gerados proceduralmente.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -253,10 +400,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/game/review/gravar-jogo",
+              "raw": "http://localhost:7979/game/review/gravar-jogo",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
@@ -267,7 +416,18 @@
           "response": []
         },
         {
-          "name": "Editar-Jogo",
+          "name": "Editar-Jogo (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -283,7 +443,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"titulo\": \"Hollow Knight: Voidheart Edition\",\n  \"genero\": \"Metroidvania\",\n  \"metacritic\": 91,\n  \"sinopse\": \"Edição definitiva com todas as expansões incluídas. Desça às profundezas de Hallownest e enfrente desafios ainda maiores no Panteão.\"\n}",
+              "raw": "{\n  \"sinopse\": \"Jogo eletrônico sandbox em 3D focado em exploração, coleta de recursos, construção e sobrevivência em mundos formados por blocos. Criado por Markus (Notch) Persson em 2009 e desenvolvido pela Mojang Studios, o jogo não impõe um único objetivo obrigatório e permite que você jogue no seu próprio ritmo.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -291,22 +451,35 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/game/review/editar-jogo/{{gameId}}",
+              "raw": "http://localhost:7979/game/review/editar-jogo/9",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "editar-jogo",
-                "{{gameId}}"
+                "9"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Deletar-Jogo",
+          "name": "Deletar-Jogo (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Jogo removido (200/204)', () => pm.expect(pm.response.code).to.be.oneOf([200, 204]));"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -320,16 +493,27 @@
             },
             "method": "DELETE",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "{{baseUrl}}/game/review/deletar-jogo/{{gameId}}",
+              "raw": "http://localhost:7979/game/review/deletar-jogo/9",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "deletar-jogo",
-                "{{gameId}}"
+                "9"
               ]
             }
           },
@@ -342,19 +526,65 @@
       "item": [
         {
           "name": "Listar-Avaliações",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\npm.test('Retornou uma lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/game/review/listar-avaliacoes/{{gameId}}",
+              "raw": "http://localhost:7979/game/review/listar-avaliacoes/8",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "listar-avaliacoes",
-                "{{gameId}}"
+                "8"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar-Avaliação-Por-Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));\npm.test('Avaliação possui nota', () => pm.expect(pm.response.json()).to.have.property('nota'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:7979/game/review/avaliacao/14",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "7979",
+              "path": [
+                "game",
+                "review",
+                "avaliacao",
+                "14"
               ]
             }
           },
@@ -362,6 +592,17 @@
         },
         {
           "name": "Gravar-Avaliação",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Avaliação criada (200/201)', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));\nconst json = pm.response.json();\nif (json && json.id) {\n    pm.collectionVariables.set('avaliacaoId', String(json.id));\n    console.log('avaliacaoId salvo:', json.id);\n}"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -377,7 +618,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"avaliador\": \"Thiago Souza\",\n  \"nota\": 8.2,\n  \"comentario\": \"Gameplay super responsivo e trilha linda, mas o começo sem mapa completo exige paciência pra não se perder.\"\n}",
+              "raw": "{\n  \"avaliador\": \"João User\",\n  \"nota\": 8.5,\n  \"comentario\": \"Gameplay super responsivo e trilha linda, mas o começo sem mapa completo exige paciência pra não se perder.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -385,22 +626,35 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/game/review/gravar-avaliacao/{{gameId}}",
+              "raw": "http://localhost:7979/game/review/gravar-avaliacao/8",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "gravar-avaliacao",
-                "{{gameId}}"
+                "8"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Editar-Avaliação",
+          "name": "Editar-Avaliação (Autor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -416,7 +670,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nota\": 9.0,\n  \"comentario\": \"Edit: depois de jogar as DLCs Hearts of Stone e Blood and Wine, subi a nota. Expansões absurdas!\"\n}",
+              "raw": "{\n  \"nota\": 9.2,\n  \"comentario\": \"Edit: depois de zerar o Panteão e pegar todos os amuletos, subi a nota. Obra-prima!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -424,22 +678,35 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/game/review/editar-avaliacao/{{avaliacaoId}}",
+              "raw": "http://localhost:7979/game/review/editar-avaliacao/14",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "editar-avaliacao",
-                "{{avaliacaoId}}"
+                "14"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Deletar-Avaliação",
+          "name": "Deletar-Avaliação (Autor / ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Avaliação removida (200/204)', () => pm.expect(pm.response.code).to.be.oneOf([200, 204]));"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -454,15 +721,17 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/game/review/deletar-avaliacao/{{avaliacaoId}}",
+              "raw": "http://localhost:7979/game/review/deletar-avaliacao/14",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "7979",
               "path": [
                 "game",
                 "review",
                 "deletar-avaliacao",
-                "{{avaliacaoId}}"
+                "14"
               ]
             }
           },
